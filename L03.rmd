@@ -1,0 +1,356 @@
+---
+title: "Statistical Thinking and Understanding Data"
+output:
+  html_notebook:
+    toc: true
+    toc_depth: 3
+  html_document:
+    toc: true
+    toc_depth: '3'
+    df_print: paged
+---
+
+## Learning Objectives
+
+After completing this lab, students will be able to:
+
+- Import datasets into R
+- Identify variable types
+- Generate summary statistics
+- Calculate mean, median, variance, and standard deviation
+- Convert data types
+
+## 1. Importing Datasets
+
+**Load a Built-in Dataset**
+
+```{r}
+data(mtcars)
+
+head(mtcars)
+```
+**Dataset Dimensions**
+```{r}
+dim(mtcars)
+```
+
+Output: 
+
+`32 11`
+
+Meaning:
+
+- 32 observations
+- 11 variables
+
+**View Dataset Structure**
+```{r}
+str(mtcars)
+```
+
+Output:
+
+```r
+'data.frame':	32 obs. of  11 variables:
+ $ mpg : num  21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
+ $ cyl : num  6 6 4 6 8 6 8 4 4 6 ...
+ $ disp: num  160 160 108 258 360 ...
+ $ hp  : num  110 110 93 110 175 105 245 62 95 123 ...
+ $ drat: num  3.9 3.9 3.85 3.08 3.15 2.76 3.21 3.69 3.92 3.92 ...
+ $ wt  : num  2.62 2.88 2.32 3.21 3.44 ...
+ $ qsec: num  16.5 17 18.6 19.4 17 ...
+ $ vs  : num  0 0 1 1 0 1 0 1 1 1 ...
+ $ am  : num  1 1 1 0 0 0 0 0 0 0 ...
+ $ gear: num  4 4 4 3 3 3 3 4 4 4 ...
+ $ carb: num  4 4 1 1 2 1 4 2 2 4 ...
+```
+## 2. Identifying Variable Types
+**Display Data Types**
+```{r}
+sapply(mtcars, class)
+```
+
+Output:
+
+```r
+ mpg       cyl      disp        hp 
+"numeric" "numeric" "numeric" "numeric" 
+     drat        wt      qsec        vs 
+"numeric" "numeric" "numeric" "numeric" 
+       am      gear      carb 
+"numeric" "numeric" "numeric"
+```
+
+**Understanding Variable Types**
+
+| Variable     | Type                 |
+| ------------ | -------------------- |
+| mpg          | Numeric              |
+| cyl          | Numeric              |
+| disp         | Numeric              |
+| hp           | Numeric              |
+| drat         | Numeric              |
+
+**Count Variable Types**
+```{r}
+table(sapply(mtcars, class))
+```
+
+## 3. Summary Statistics
+
+**Summary of Entire Dataset**
+```{r}
+summary(mtcars)
+```
+
+Output includes:
+
+- Min
+- 1st Quartile
+- Median
+- Mean
+- 3rd Quartile
+- Max
+
+**Summary of a Single Variable**
+```{r}
+summary(mtcars$hp)
+```
+
+## 4. Measures of Central Tendency
+**Mean**
+```{r}
+mean(mtcars$hp)
+```
+
+## Median 
+```{r}
+median(mtcars$hp)
+
+```
+
+
+
+**Mode (Custom Function)**
+```{r}
+mode(mtcars$hp)
+```
+
+
+
+```{r}
+get_mode <- function(x)
+{
+  unique_values <- unique(x)
+
+  unique_values[
+    which.max(tabulate(match(x, unique_values)))
+  ]
+}
+
+get_mode(mtcars$hp)
+```
+
+## 5. Measures of Spread
+**Variance**
+```{r}
+var(mtcars$hp)
+```
+
+**Standard Deviation**
+```{r}
+sd(mtcars$hp)
+```
+
+**Range**
+```{r}
+range(mtcars$hp)
+```
+
+**Interquartile Range (IQR)**
+```{r}
+IQR(mtcars$hp)
+```
+
+## 6. Calculating Statistics for Multiple Variables
+
+**Mean of All Numeric Variables**
+```{r}
+sapply(mtcars[,1:11], mean)
+```
+
+**Median of All Numeric Variables**
+```{r}
+sapply(mtcars[,1:11], median)
+```
+
+**Standard Deviation of All Numeric Variables**
+```{r}
+sapply(mtcars[,1:11], sd)
+```
+
+## 7. Converting Data Types
+Create a sample dataset:
+
+```{r}
+Participants <- data.frame(
+  ID = c("1001","1002","1003"),
+  Age = c("25","26","27"),
+  CGPA = c("3.00","3.50","3.80")
+)
+
+Participants
+```
+
+**Check Current Types**
+```{r}
+str(Participants)
+```
+
+Output:
+
+```r
+ID   : chr
+Age  : chr
+CGPA : chr
+```
+
+**Convert Character to Numeric**
+
+```{r}
+Participants$ID <- as.numeric(Participants$ID)
+
+Participants$CGPA <- as.numeric(Participants$CGPA)
+```
+
+**Verify Conversion**
+```{r}
+str(faculty)
+```
+
+Output:
+
+```r
+Age  : num
+CGPA : num
+```
+
+**Convert Character to Factor**
+
+```{r}
+Participants$ID <- as.factor(Participants$ID)
+
+str(Participants)
+```
+
+## 8. Importing Data from CSV
+Create a CSV file named:
+`Book2.csv  `
+
+Contents:
+
+| ID | Name   | CGPA |
+| -- | ------ | ---- |
+| 1  | Rahim  | 3.70 |
+| 2  | Karim  | 3.50 |
+| 3  | Nabila | 3.90 |
+
+
+Read file:
+
+```{r}
+faculty <- read.csv(
+  "Book1.csv"
+)
+
+head(faculty)
+```
+
+## Exercises
+**Exercise 1**
+
+Load the built-in dataset:
+
+```{r}
+data(mtcars)
+
+head(mtcars)
+```
+Find:
+
+- Number of rows
+- Number of columns
+- Variable names
+
+**Exercise 2**
+
+For the variable:
+
+`mtcars$mpg`
+
+Calculate:
+
+- Mean
+- Median
+- Variance
+- Standard Deviation
+
+
+**Exercise 3**
+
+Display summary statistics for:
+
+`mtcars`
+
+**Exercise 4**
+
+Create:
+
+`ages <- c("18","20","22","25")`
+
+Convert it to numeric and verify the type.
+
+**Exercise 5**
+
+Import a CSV file and determine:
+
+- Dataset dimensions
+- Variable types
+- Summary statistics
+
+## Important Points
+- When calculating individual descriptive statistics, always remember to include na.rm = TRUE. If your column contains even a single missing value (NA), R will output NA as the result unless you explicitly tell it to ignore missing values.
+
+- If you are  asked to calculate these metrics across different groups (e.g., finding the mean salary split by department). The **dplyr** package handles this beautifully.
+
+**Example:**
+
+```{r}
+library(dplyr)
+grouped_stats <- my_data_csv %>%
+  group_by(categorical_column) %>%
+  summarise(
+    Group_Mean     = mean(numeric_column, na.rm = TRUE),
+    Group_Median   = median(numeric_column, na.rm = TRUE),
+    Group_Variance = var(numeric_column, na.rm = TRUE),
+    Group_SD       = sd(numeric_column, na.rm = TRUE),
+    Sample_Count   = n() # Counts number of observations per group
+  )
+
+print(grouped_stats)
+```
+
+## Homework
+
+Download any public CSV dataset from Kaggle, UCI Machine Learning Repository, or another source.
+
+Perform the following:
+
+- Import the dataset into R.
+- Display the first 10 rows.
+- Display dataset dimensions.
+- Identify variable types.
+- Generate summary statistics.
+- Calculate the mean, median, variance, and standard deviation for at least one numerical variable.
+- Convert at least one variable to another data type.
+Write a short summary (3–5 sentences) describing the dataset.

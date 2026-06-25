@@ -1,0 +1,619 @@
+---
+title: "Functions and Data Handling in R"
+output:
+  html_notebook:
+    toc: true
+    toc_depth: 3
+---
+
+## Learning Objectives
+
+After completing this lab, relational will be able to:
+
+- Create and use variables in R
+- Write simple user-defined functions
+- Read data from CSV files
+- Explore and inspect datasets
+- Create new variables from existing data
+- Save modified datasets to files
+
+## 1. Creating Variables
+
+Variables store data values.
+
+**Numeric Variables**
+```{r}
+height <- 5.7
+name <- "Wakar"
+height 
+name 
+```
+**Character Variables**
+```{r}
+adress <- "Bashundhara"
+university <- "AIUB" 
+adress 
+university
+```
+
+**Logical Variables**
+```{r}
+reached <- TRUE
+!reached  
+```
+
+## 2. Working with Vectors
+A vector stores multiple values of the same type.
+
+```{r}
+id <- c(5, 7, 9, 8, 6)
+id
+```
+Access elements:
+```{r}
+id[5]
+id[4]
+```
+
+Basic operations:
+
+```{r}
+mean(id)
+max(id)
+min(id)
+sum(id)
+```
+
+## 3. Writing Simple Functions
+Functions help reuse code.
+
+General syntax:
+
+function_name <- function(parameters){
+
+    statements
+
+    return(value)
+
+}
+
+**Example 1: Addition Function**
+```{r}
+add_numbers <- function(a, b){ 
+  result <- a + b 
+  return(result) 
+} 
+
+add_numbers(1, 90)
+
+
+add_numbers(5,890)
+```
+
+**Example 2: Area of Rectangle**
+```{r}
+rectangle_area <- function(length, width){
+  area <- length * width
+  return(area)
+}
+
+rectangle_area(10, 5)
+```
+
+**Example 3: Grade Function**
+```{r}
+calculate_grade <- function(score){
+
+  if(score >= 80){
+    return("A")
+  }
+
+  else if(score >= 70){
+    return("B")
+  }
+
+  else if(score >= 60){
+    return("C")
+  }
+
+  else{
+    return("F")
+  }
+
+}
+
+calculate_grade(85)
+```
+
+## 4. Built-in Dataset Exploration
+
+R provides several built-in datasets.
+
+Load the iris dataset:
+
+`data(iris)`
+
+Display first rows:
+
+`head(iris)`
+
+Display last rows:
+
+`tail(iris)`
+
+## 5. Basic Dataset Inspection
+Structure of Dataset
+`str(iris)`
+
+Shows:
+
+- Variable names
+- Data types
+- Sample values
+
+**Dataset Dimensions**
+`dim(iris)`
+
+Output:
+
+`150 rows and 5 columns`
+
+**Column Names**
+
+`names(iris)`
+
+
+**Summary Statistics**
+`summary(iris)`
+
+**View Dataset**
+
+`View(iris)`
+
+## 6. Reading Data from Files
+
+**Reading CSV Files**
+
+relational.csv
+
+Example:
+
+| ID | Name   | CGPA |
+|----|--------|------|
+| 1  | Rahim  | 3.70 |
+| 2  | Karim  | 3.50 |
+| 3  | Nabila | 3.90 |
+
+**Read CSV File**
+
+`relational <- read.csv("relational.csv")`
+
+Alternative (Recommended)
+```{r}
+
+library(readr)
+relational <- read_csv("relational.csv")
+```
+
+Display data:
+
+`head(relational)`
+
+**Check Structure**
+
+`str(realational)`
+
+**Reading Text Files**
+
+Example: relational.txt
+
+ID Name CGPA
+
+1 Rahim 3.70
+
+2 Karim 3.50
+
+3 Nabila 3.90
+
+```r
+#Read Text File
+relational <- read.table(
+    "relational.txt",
+    header = TRUE
+)
+
+head(relational)
+```
+
+**Read Tab-Separated Text File**
+
+Example:
+
+ID	Name	CGPA
+
+1	Rahim	3.70
+
+2	Karim	3.50
+
+3	Nabila	3.90
+```r
+relational <- read.delim(
+    "relational.txt"
+)
+
+head(relational)
+```
+
+**Reading Excel Files (.xlsx)**
+
+```{r}
+#Install package:
+install.packages("readxl")
+
+#Load package:
+library(readxl)
+
+#Read Excel file:
+
+relational <- read_excel(
+    "relational.xlsx"
+)
+
+head(relational)
+```
+
+Read Specific Worksheet
+
+`relational <- read_excel(
+    "relational.xlsx",
+    sheet = "Sheet1"
+)`
+
+
+**Reading Data from URLs**
+
+Many datasets are available online.
+
+Example:
+```{r}
+
+url <- "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
+
+iris_data <- read.csv(url)
+
+head(iris_data)
+```
+
+**Reading Data from GitHub**
+
+GitHub hosts many publicly available datasets.
+```{r}
+github_url <- "https://raw.githubusercontent.com/cs109/2014_data/master/countries.csv"
+
+countries <- read.csv(
+    github_url
+)
+
+head(countries)
+```
+
+**Reading Data from Google Drive**
+
+Read a Public CSV Directly from Google Drive
+
+Suppose the Google Drive sharing link is:
+
+https://drive.google.com/file/d/FILE_ID/view?usp=sharing
+
+Example:
+
+https://drive.google.com/file/d/1ABCDEF123456789/view?usp=sharin
+
+<span style="color:red;">
+The file must be shared publicly or accessible to your account.
+</span>
+
+The File ID is: 
+1ABCDEF123456789
+
+Create a direct download URL:
+```{r}
+file_id <- "1ABCDEF123456789"
+
+url <- paste0(
+  "https://drive.google.com/uc?export=download&id=",
+  file_id
+)
+
+#if the file is CSV
+relational <- read.csv(url) 
+
+head(relational)
+```
+
+## 7. Creating New Variables
+
+Suppose the dataset contains:
+
+relational
+
+Create a scholarship variable:
+
+`relational$Scholarship <- relational$CGPA >= 3.75`
+
+Display:
+
+`relational`
+
+**Create Grade Category**
+```{r}
+relational$Grade <- ifelse(
+    relational$CGPA >= 3.75,
+    "Excellent",
+    "Good"
+)
+```
+
+Display:
+
+`relational`
+
+
+
+## 8. Writing Data into Files
+
+Save dataset as CSV.
+```{r}
+write.csv(
+    relational,
+    "relational_updated.csv",
+    row.names = FALSE
+)
+```
+
+A new file named:relational_updated.csv will be created.
+
+Since this is only the **second lab** of an undergraduate Introduction to Data Science course, the exercises should gradually move from **variables → functions → reading data → data inspection → creating variables → saving data**.
+
+I would organize them into three levels: Basic, Intermediate, and Challenge.
+
+
+## Lab Exercises
+
+### Exercise 1: Creating Variables
+
+Create the following variables:
+
+* Student Name
+* Student ID
+* Age
+* CGPA
+
+Display all variables.
+
+Expected output:
+
+```{r} 
+
+Name <- "Wakar"
+ID<- 23-51784-2
+Age<- 25
+CGPA<- 3.47
+Name
+ID
+Age
+CGPA
+```
+
+### Exercise 2: Working with Vectors
+
+Create a vector containing the following quiz marks:
+
+```{r}
+
+
+Total_marks = 100
+Average_marks <- 70
+Highest_mark <- 80
+Lowest_mark <-60
+
+Total_marks
+Average_marks
+Highest_mark
+Lowest_mark
+
+
+```
+### Exercise 3: Creating Functions
+
+Write a function that calculates:
+
+```text
+Area = Length × Width
+```
+
+Test the function using:
+
+```text
+Length = 12
+Width = 8
+```
+
+
+### Exercise 4: Temperature Conversion
+
+Write a function that converts Celsius to Fahrenheit.
+
+Formula:
+
+```text
+F = (9/5 × C) + 32
+```
+
+Test using:
+
+```text
+C = 25
+```
+
+### Exercise 5: Exploring the mtcars Dataset
+
+Load the built-in dataset:
+
+```r
+data(mtcars)
+```
+
+Perform the following tasks:
+
+1. Display the first 10 rows.
+2. Display the last 10 rows.
+3. Determine the number of rows and columns.
+4. Display column names.
+5. Display summary statistics.
+
+### Exercise 6: Dataset Inspection
+
+Using the mtcars dataset:
+
+Display:
+
+```r
+head(mtcars)
+tail(mtcars)
+str(mtcars)
+summary(mtcars)
+```
+
+Briefly explain what each function does.
+
+### Exercise 7: Reading a CSV File
+
+Suppose the file:
+
+```text
+relational.csv
+```
+
+contains:
+
+| ID | Name   | CGPA |
+| -- | ------ | ---- |
+| 1  | Rahim  | 3.70 |
+| 2  | Karim  | 3.50 |
+| 3  | Nabila | 3.90 |
+
+Read the file and:
+
+1. Display the first rows.
+2. Display its structure.
+3. Display summary statistics.
+
+### Exercise 8: Reading an Excel File
+
+Read:
+
+```text
+relational.xlsx
+```
+
+Display:
+
+```r
+head(data)
+summary(data)
+```
+
+### Exercise 9: Reading Data from an Online Source
+
+Load the Iris dataset directly from:
+
+```r
+url <- "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
+```
+
+Display:
+
+* First 5 rows
+* Dataset dimensions
+* Summary statistics
+
+
+### Exercise 10: Scholarship Eligibility
+
+Using the following dataset:
+
+| ID | Name   | CGPA |
+| -- | ------ | ---- |
+| 1  | Rahim  | 3.80 |
+| 2  | Karim  | 3.40 |
+| 3  | Nabila | 3.95 |
+
+Create a new variable:
+
+```text
+Scholarship
+```
+
+Rule:
+
+```text
+CGPA ≥ 3.75 → TRUE
+Otherwise → FALSE
+```
+
+### Exercise 11: Performance Category
+
+Create a variable:
+
+```text
+Performance
+```
+
+Rule:
+
+```text
+CGPA ≥ 3.75      → Excellent
+3.50–3.74        → Good
+Below 3.50       → Average
+```
+
+Display the updated dataset.
+
+### Exercise 12: Save a Modified Dataset
+
+After creating the Scholarship and Performance variables:
+
+Save the dataset as:
+
+```text
+relational_updated.csv
+```
+
+Verify that the file is created successfully.
+
+
+## Mini Project
+
+Create a dataset for at least 10 relational containing:
+
+* ID
+* Name
+* Quiz Marks
+* Assignment Marks
+* Midterm Marks
+
+Perform the following:
+
+1. Read the dataset.
+2. Inspect the dataset.
+3. Create a Total Marks variable.
+4. Create a Grade variable.
+5. Display summary statistics.
+6. Save the updated dataset as:
+
+```text
+final_results.csv
+
+
+```
