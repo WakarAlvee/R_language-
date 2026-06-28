@@ -1,0 +1,351 @@
+---
+title: "EDA - Visualization"
+output:
+  html_notebook:
+    toc: true
+    toc_depth: 3
+---
+
+## Learning Objectives
+
+After completing this lab, students will be able to:
+
+- Create histograms and boxplots
+- Generate scatterplots using ggplot2
+- Identify outliers visually
+- Perform correlation analysis
+- Prepare a simple EDA report
+
+## 1. Load Required Libraries
+
+
+```{r}
+# Install packages (run once)
+# install.packages("tidyverse")
+# install.packages("corrplot")
+
+library(tidyverse)
+library(corrplot)
+```
+tidyverse is a collection of R packages designed for data science that provides a consistent and user-friendly framework for data import, cleaning, wrangling, visualization, and analysis. It simplifies common data manipulation tasks and promotes the use of tidy data, where each variable is a column, each observation is a row, and each value occupies a single cell.
+
+Some commonly used packages in the tidyverse include:
+
+- readr – Import data
+- dplyr – Data manipulation and wrangling
+- tidyr – Data reshaping and tidy data
+- ggplot2 – Data visualization
+
+## 2. Load Dataset
+We will use the built-in mtcars dataset.
+```{r}
+data(iris)  #instead of mtcars 
+head(iris)
+```
+
+## 3. Understanding the Dataset
+```{r}
+str(iris)
+dim(iris)
+summary(iris)
+```
+
+**Questions**
+
+- How many observations are there?
+- How many variables are there?
+- Which variables are numerical?
+
+## 4. Histogram
+A histogram shows the distribution of a numerical variable.
+
+Example: Miles per Gallon (mpg)
+```{r}
+hist(
+  iris$Sepal.Length,
+  main = "Distribution of Sepal Length",
+  xlab = "Sepal Length",
+  col = "lightblue",
+  border = "black"
+)
+
+```
+
+**Interpretation**
+
+- Is the distribution symmetric?
+- Is it positively or negatively skewed?
+- Where are most observations concentrated?
+
+### Histogram using ggplot2
+```{r}
+ggplot(
+  iris,
+  aes(x = Sepal.Length)
+) +
+  geom_histogram(
+    bins = 12,
+    fill = "steelblue",
+    color = "black"
+  ) +
+  labs(
+    title = "Distribution of Sepal Length",
+    x = "Sepal Length",
+    y = "Frequency"
+  )
+```
+
+## 5. Boxplot
+A boxplot summarizes:
+
+- Minimum
+- Q1
+- Median
+- Q3
+- Maximum
+- Outliers
+
+```{r}
+boxplot(
+  iris$Sepal.Length,
+  main = "Boxplot of Sepal Length",
+  col = "lightgreen"
+)
+```
+
+### Boxplot using ggplot2
+```{r}
+ggplot(
+  iris,
+  aes(y = Sepal.Length)
+) +
+  geom_boxplot(
+    fill = "orange"
+  ) +
+  labs(
+    title = "Boxplot of Sepal Length"
+  )
+```
+
+
+## 6. Visual Identification of Outliers
+Create a sample dataset with an obvious outlier.
+
+```{r}
+heights <- c(
+  150, 155, 158, 160, 162,
+  165, 168, 170, 172, 175,
+  300
+)
+
+boxplot(
+  heights,
+  main = "Boxplot with Outlier",
+  col = "pink"
+)
+```
+
+**Discussion**
+
+- Which value appears to be an outlier?
+- Why does it appear separately?
+
+### Variation and Distribution Spanned by Boxplots 
+
+```{r}
+
+# Comparing Sepal Length across different Species
+ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
+  geom_boxplot(alpha = 0.7, outlier.color = "#E74C3C", outlier.shape = 16) +
+  scale_fill_brewer(palette = "Blues") +
+  labs(
+    title = "Sepal Length Across Species",
+    x = "Species",
+    y = "Sepal Length",
+    fill = "Species Legend"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+### Detecting Outliers Using IQR
+```{r}
+Q1 <- quantile(heights, 0.25)
+
+Q3 <- quantile(heights, 0.75)
+
+IQR_value <- IQR(heights)
+
+lower <- Q1 - 1.5 * IQR_value
+
+upper <- Q3 + 1.5 * IQR_value
+
+heights[
+  heights < lower |
+  heights > upper
+]
+```
+
+## 7. Scatterplots using ggplot2
+Scatterplots help visualize relationships between variables.
+```{r}
+ggplot(
+  iris,
+  aes(
+    x = Petal.Length,
+    y = Petal.Width
+  )
+) +
+  geom_point(
+    size = 3,
+    color = "blue"
+  ) +
+  labs(
+    title = "Petal Length vs Petal Width",
+    x = "Petal Length",
+    y = "Petal Width"
+  )
+```
+
+
+**Questions**
+
+- Is there a positive or negative relationship?
+- Is the relationship strong or weak?
+
+## 8. Adding a Trend Line
+
+```{r}
+ggplot(
+  iris,
+  aes(
+    x = Petal.Length,
+    y = Petal.Width
+  )
+) +
+  geom_point(size = 3) +
+  geom_smooth(
+    method = "lm",
+    se = FALSE,
+    color = "red"
+  ) +
+  labs(
+    title = "Petal Length vs Petal Width"
+  )
+```
+
+**Interpretation**
+
+Does MPG increase or decrease as weight increases?
+
+## 9. Correlation Analysis
+**Correlation Coefficient**
+
+```{r}
+cor(
+  iris$Petal.Length,
+  iris$Petal.Width
+)
+```
+
+**Interpretation**
+
+| Correlation | Interpretation   |
+| ----------- | ---------------- |
+| +1          | Perfect positive |
+| 0           | No relationship  |
+| -1          | Perfect negative |
+
+
+**Correlation Matrix**
+
+```{r}
+# Exclude the categorical Species column (column 5) for correlation
+cor_matrix <- cor(iris[, 1:4])
+
+cor_matrix
+```
+
+**Visualizing Correlation Matrix**
+
+```{r}
+corrplot(
+  cor_matrix,
+  method = "color",
+  type = "upper"
+)
+```
+
+**Questions**
+
+- Which variables are strongly correlated?
+- Which variables have weak correlations?
+
+## 10. Pairwise Scatterplots
+```{r}
+pairs(
+  iris[, 1:4],
+  main = "Pairwise Scatterplots"
+)
+```
+
+
+
+
+# ---- I used Iris instead of mtcars in above 10 examples 
+
+
+
+## List Key Findings
+
+1. Sepal Length: Ranges 4.5–7.9 cm; virginica is largest, setosa is smallest.
+
+2. Outliers: The value 300 sits far past the $IQR$ boundary, confirming a severe anomaly.Petal 
+
+3. Trend: A strong positive linear relationship links petal length and petal width.
+
+4. Species Clustering: Setosa forms a completely isolated group due to its tiny petals.
+
+5. Strongest Correlation: Petal length and width are highly correlated at ~0.96.
+
+6. Weakest Correlation: Sepal width and length show almost no linear relationship.
+
+and more
+
+## Exercises
+### Exercise 1
+Perform EDA on the variable:
+
+`mtcars$hp`
+
+Tasks:
+
+1. Create a histogram.
+2. Create a boxplot.
+3. Identify any outliers.
+4. Calculate summary statistics.
+5. Describe the distribution.
+
+### Exercise 2
+Using the iris dataset: `data(iris)`
+
+Perform the following:
+
+1. Create a histogram of Sepal Length.
+2. Create a boxplot of Petal Length.
+3. Create a scatterplot of Sepal Length vs Petal Length.
+4. Calculate the correlation between Sepal Length and Petal Length.
+5. Write a short EDA report (5–8 bullet points).
+
+## Home work
+
+Choose a public dataset from Kaggle or UCI and prepare a one-page EDA report containing:
+
+- Dataset description
+- Summary statistics
+- Histogram
+- Boxplot
+- Scatterplot
+- Correlation analysis
+- Three key findings
+
